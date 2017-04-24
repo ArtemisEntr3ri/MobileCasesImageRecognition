@@ -122,6 +122,5 @@ if __name__ == "__main__":
 
     net = Network([5, 3, 2])
 
-    print(net.biases)
-    print(net.weights)
-    print (0)
+    print(sigmoid(1.5))
+    print(0)
