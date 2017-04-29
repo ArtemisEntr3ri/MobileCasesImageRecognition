@@ -1,8 +1,11 @@
 import numpy as np
 import random
+import pickle
+
 
 class Network:
-    def __init__(self, sizes):
+
+    def __init__(self, sizes=[]):
         self.num_layers = len(sizes)
         self.sizes = sizes
         self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
@@ -108,6 +111,22 @@ class Network:
         \partial a for the output activations."""
 
         return output_activations - y
+
+    def save(self, name = 'last_object'):
+        """Saves network and its parameters to Objects folder"""
+
+        with open('Objects\\' + name, 'wb') as f:
+            pickle.dump(self, f, pickle.HIGHEST_PROTOCOL)
+
+        return
+
+    def load(self, name='last_object'):
+        """Returns loaded network. To load network create empty network called net and call
+        net = net.load()"""
+
+        with open('Objects\\' + name, 'rb') as f:
+            return pickle.load(f)
+
 # Miscellaneous functions
 
 def sigmoid(z):
@@ -120,7 +139,13 @@ def sigmoid_derived(z):
 
 if __name__ == "__main__":
 
-    net = Network([5, 3, 2])
+    #net = Network([5, 3, 2])
 
-    print(sigmoid(1.5))
+    #print(net.biases)
+    #net.save()
+
+    # net = Network([])
+    # net = net.load()
+    # print(net.biases)
+    # print(net.sizes)
     print(0)

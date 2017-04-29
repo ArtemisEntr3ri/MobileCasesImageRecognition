@@ -1,16 +1,21 @@
 import numpy as np
 import random
 
+
+def dodaj1(x):
+    return x+1
+
+def dodaj5(x):
+    return x+5
+
+
+def nesto(x, funkcija):
+    return funkcija(x)
+
 if __name__ == "__main__":
-    sizes = [5, 3, 2, 1, 10, 20]
 
-    A = np.random.randn(3, 5)
-    # x = np.random.randn(5, 1)
-    #
-    # b = np.random.randn(3, 1)
-    # rjes = np.dot(A, x) + b
+    print(nesto(5, dodaj5))
 
 
 
 
-    print(np.dot(np.random.randn(5,1), np.random.randn(1,2)))
