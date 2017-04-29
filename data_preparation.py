@@ -28,7 +28,7 @@ def create_data_set(directory, transformation, dataset_name, labels = 17):
                 image = image.ravel()
 
                 # Set category
-                label = np.zeros((labels, 1))
+                label = np.zeros(labels)
                 label[category] = 1
 
                 # Append touple to list
@@ -86,7 +86,7 @@ if __name__ == "__main__":
     directory = 'C:\\Users\\Elio\\Documents\\Data Science A-Z\\20170407IdentifyingThemesfromMobileCaseImages\\' \
                   '2. Prepared Data\\Train\\'
 
-    x = create_data_set(directory, identity, 'debug_dataset')
+    x = create_data_set(directory, resize, 'debug_dataset')
 
     print(len(x))
     print(x[5])

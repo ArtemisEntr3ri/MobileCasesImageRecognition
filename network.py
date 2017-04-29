@@ -8,7 +8,7 @@ class Network:
     def __init__(self, sizes=[]):
         self.num_layers = len(sizes)
         self.sizes = sizes
-        self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
+        self.biases = [np.random.randn(y,) for y in sizes[1:]]
         self.weights = [np.random.randn(x, y) for x, y in zip(sizes[1:], sizes[:-1])]
         return
 
@@ -28,7 +28,7 @@ class Network:
         network will be evaluated against the test data after each
         epoch, and partial progress printed out.  This is useful for
         tracking progress, but slows things down substantially."""
-        if test_data:
+        if len(test_data) > 0:
             n_test = len(test_data)
         n = len(training_data)
 
@@ -60,7 +60,7 @@ class Network:
             nabla_w = [nw + dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]
 
         self.weights = [w - learning_rate/len(mini_batch) * nw for w, nw in zip(self.weights, nabla_w)]
-        self.biases = [b - learning_rate/len(mini_batch)*nb for b, nb in zip(self.biases, nabla_b)]
+        self.biases = [b - learning_rate/len(mini_batch)* nb for b, nb in zip(self.biases, nabla_b)]
 
         return
 
@@ -77,10 +77,11 @@ class Network:
         zs = [] # list to store all z vectors, layer by layer
 
         for w, b in zip(self.weights, self.biases):
-            z = np.dot(w,activation) + b
+            z = np.dot(w, activation) + b
             zs.append(z)
 
             activation = sigmoid(z)
+
             activations.append(activation)
 
         # backward pass
@@ -94,7 +95,7 @@ class Network:
 
             delta = np.dot(self.weights[-l+1].transpose(), delta) * sigmoid_derived(z)
             nabla_b[-l] = delta
-            nabla_w[-1] = np.dot(delta, activations[-l-1].transpose())
+            nabla_w[-l] = np.dot(delta, activations[-l-1].transpose())
 
         return nabla_b, nabla_w
 
@@ -109,7 +110,7 @@ class Network:
     def cost_derivative(self, output_activations, y):
         """Return the vector of partial derivatives \partial C_x /
         \partial a for the output activations."""
-
+        y = y.reshape(17,)
         return output_activations - y
 
     def save(self, name = 'last_object'):
@@ -139,13 +140,19 @@ def sigmoid_derived(z):
 
 if __name__ == "__main__":
 
-    #net = Network([5, 3, 2])
+    with open('Objects\\debug_dataset', 'rb') as f:
+        data = pickle.load(f)
 
-    #print(net.biases)
-    #net.save()
+    data = np.array(data)
 
-    # net = Network([])
-    # net = net.load()
-    # print(net.biases)
-    # print(net.sizes)
-    print(0)
+    random.shuffle(data)
+
+    train_data = data[0:3500]
+    test_data = data[3501:]
+
+    net = Network([4800, 30, 17])
+
+    net.SGD(train_data, 5, 20, 0.5, test_data)
+
+
+    print(1)
