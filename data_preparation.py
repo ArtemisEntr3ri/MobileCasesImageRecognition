@@ -83,7 +83,7 @@ def create_data_set(directory, transformation, dataset_name, labels = 17):
 def identity(x):
     return x
 
-def resize(x, height = 40, width = 40):
+def resize(x, height = 20, width = 10):
     x = scipy.misc.imresize(x, (height, width))
     x = color.rgb2gray(x)
     x = x/255
@@ -117,6 +117,6 @@ if __name__ == "__main__":
     directory = 'C:\\Users\\Elio\\Documents\\Data Science A-Z\\20170407IdentifyingThemesfromMobileCaseImages\\' \
                   '2. Prepared Data\\Train\\'
 
-    x = create_data_set(directory, resize, 'debug_dataset')
+    x = create_data_set(directory, resize, 'debug_dataset2')
 
     print(0)

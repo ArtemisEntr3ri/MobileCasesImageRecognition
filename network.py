@@ -2,6 +2,7 @@ import numpy as np
 import random
 import pickle
 
+import matplotlib.pyplot as plt
 
 class Network:
 
@@ -106,6 +107,8 @@ class Network:
             network's output is assumed to be the index of whichever
             neuron in the final layer has the highest activation."""
         test_results = [(np.argmax(self.feedforward(x)), y) for (x, y) in test_data]
+
+        # return sum(int(x == y) for (x, y) in test_results)
         return sum(int(y[x] == 1) for x, y in test_results)
 
     def cost_derivative(self, output_activations, y):
@@ -140,11 +143,14 @@ def sigmoid_derived(z):
 
 if __name__ == "__main__":
 
-    with open('Objects\\debug_dataset', 'rb') as f:
+    with open('Objects\\debug_dataset2', 'rb') as f:
         data = pickle.load(f)
 
     data = np.array(data)
-    #
+
+    # print(data[1][0])
+    plt.imshow(data[1][0].reshape(20, 10))
+    plt.show()
     # print(data[0][0].shape)
     # print(data[0][1].shape)
     # for item in data:
@@ -155,9 +161,8 @@ if __name__ == "__main__":
     train_data = data[0:3500]
     test_data = data[3501:]
 
-    net = Network([1600, 50, 17])
+    net = Network([200, 17])
 
-    net.SGD(train_data, 30, 20, 0.3, test_data)
-
+    net.SGD(train_data, 30, 20, 0.3, train_data)
 
     print(1)
