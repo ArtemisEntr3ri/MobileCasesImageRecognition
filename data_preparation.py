@@ -2,6 +2,8 @@ import scipy.misc
 import glob
 import numpy as np
 import pickle
+import matplotlib.pyplot as plt
+from skimage import color
 
 def create_data_set(directory, transformation, dataset_name, labels = 17):
     """From a folder with pictures creates list of touples (if labeled) or list of vectors (if not labeled).
@@ -83,14 +85,22 @@ def identity(x):
 
 def resize(x, height = 40, width = 40):
     x = scipy.misc.imresize(x, (height, width))
+    x = color.rgb2gray(x)
+    x = x/255
     return x
+
+
 
 if __name__ == "__main__":
 
-    # image_path = 'C:\\Users\\Elio\\Documents\\Data Science A-Z\\20170407IdentifyingThemesfromMobileCaseImages\\' \
-    #              '2. Prepared Data\\Train\\Automobile\\Img52.jpg'
-    #
-    #
+    image_path = 'C:\\Users\\Elio\\Documents\\Data Science A-Z\\20170407IdentifyingThemesfromMobileCaseImages\\' \
+                 '2. Prepared Data\\Train\\Automobile\\Img52.jpg'
+
+    # x = resize(scipy.misc.imread(image_path))
+    # plt.imshow(x)
+    # plt.show()
+    # print(resize(scipy.misc.imread(image_path)))
+
     # x = scipy.misc.imread(image_path)
     #
     # print(x.shape)

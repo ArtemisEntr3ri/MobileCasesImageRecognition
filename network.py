@@ -144,7 +144,7 @@ if __name__ == "__main__":
         data = pickle.load(f)
 
     data = np.array(data)
-
+    #
     # print(data[0][0].shape)
     # print(data[0][1].shape)
     # for item in data:
@@ -155,9 +155,9 @@ if __name__ == "__main__":
     train_data = data[0:3500]
     test_data = data[3501:]
 
-    net = Network([4800, 30, 17])
+    net = Network([1600, 50, 17])
 
-    net.SGD(train_data, 5, 20, 0.03, test_data)
+    net.SGD(train_data, 30, 20, 0.3, test_data)
 
 
     print(1)
