@@ -5,13 +5,23 @@ import pickle
 
 def create_data_set(directory, transformation, dataset_name, labels = 17):
     """From a folder with pictures creates list of touples (if labeled) or list of vectors (if not labeled).
-    Every picture is transformed. Labels are binary vectors with size equall to number of categories."""
+    Every picture is transformed. Labels are binary vectors with size equall to number of categories.
+
+    directory - putanja do foldera u kojem se nalaze svi folderi kategorija slika sa slikama, ili samo folder sa slikama
+                ako se radi o testnom njihovom skupu
+
+    transformation - funkcija koja prima matrice slika (tenzor) i vraca transfomiranu sliku u obliku vektora stupca
+    dataset_name - ime kako zelimo spremiti dataset
+    """
 
     # Index of category
     category = 0
 
     # List of pictures as vectors and labels
     image_list = []
+
+    # Vector column length (check cause some images are 4 matrices) we discard them
+    dimension_check = 0
 
     if labels > 0:
         for category_folder in glob.iglob(directory + '*\\'):
@@ -26,9 +36,15 @@ def create_data_set(directory, transformation, dataset_name, labels = 17):
 
                 # Make image 1D vector column
                 image = image.ravel()
+                image = image.reshape(image.shape[0], 1)
+
+                if dimension_check == 0:
+                    dimension_check = image.shape[0]
+                elif dimension_check != image.shape[0]:
+                    continue
 
                 # Set category
-                label = np.zeros(labels)
+                label = np.zeros((labels, 1))
                 label[category] = 1
 
                 # Append touple to list
@@ -46,6 +62,12 @@ def create_data_set(directory, transformation, dataset_name, labels = 17):
 
             # Make image 1D vector column
             image = image.ravel()
+            image = image.reshape(image.shape[0], 1)
+
+            if dimension_check == 0:
+                dimension_check = image.shape[0]
+            elif dimension_check != image.shape[0]:
+                continue
 
             # Append it to list
             image_list.append(image)
@@ -60,7 +82,6 @@ def identity(x):
     return x
 
 def resize(x, height = 40, width = 40):
-
     x = scipy.misc.imresize(x, (height, width))
     return x
 
@@ -87,8 +108,5 @@ if __name__ == "__main__":
                   '2. Prepared Data\\Train\\'
 
     x = create_data_set(directory, resize, 'debug_dataset')
-
-    print(len(x))
-    print(x[5])
 
     print(0)

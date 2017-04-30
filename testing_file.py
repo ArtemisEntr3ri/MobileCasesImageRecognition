@@ -17,10 +17,13 @@ if __name__ == "__main__":
 
     #print(nesto(5, dodaj5))
 
-    x=np.zeros((3, 1))
+    x = np.zeros((3, 1))
     print(x.shape)
     x = x.reshape(3,)
     print(x.shape)
+    x = x[np.newaxis].transpose()
+    print(x.shape)
+
     print(0)
 
 

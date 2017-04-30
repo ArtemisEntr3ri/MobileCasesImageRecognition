@@ -8,7 +8,7 @@ class Network:
     def __init__(self, sizes=[]):
         self.num_layers = len(sizes)
         self.sizes = sizes
-        self.biases = [np.random.randn(y,) for y in sizes[1:]]
+        self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
         self.weights = [np.random.randn(x, y) for x, y in zip(sizes[1:], sizes[:-1])]
         return
 
@@ -40,7 +40,7 @@ class Network:
             for mini_batch in mini_batches:
                 self.update_mini_batch(mini_batch, learning_rate)
 
-            if test_data:
+            if len(test_data) > 0:
                 print("Epoch {0}: {1} / {2}".format(j, self.evaluate(test_data), n_test))
             else:
                 print("Epoch {0} complete".format(j))
@@ -73,6 +73,7 @@ class Network:
 
         # feedforward
         activation = x
+
         activations = [x]  # list to store all activations, layer by layer
         zs = [] # list to store all z vectors, layer by layer
 
@@ -104,16 +105,15 @@ class Network:
             network outputs the correct result. Note that the neural
             network's output is assumed to be the index of whichever
             neuron in the final layer has the highest activation."""
-        test_results = [(np.argmax(self.feedforward(x)), y) for (x,y) in test_data]
-        return sum(int(x == y) for x, y in test_results)
+        test_results = [(np.argmax(self.feedforward(x)), y) for (x, y) in test_data]
+        return sum(int(y[x] == 1) for x, y in test_results)
 
     def cost_derivative(self, output_activations, y):
         """Return the vector of partial derivatives \partial C_x /
         \partial a for the output activations."""
-        y = y.reshape(17,)
         return output_activations - y
 
-    def save(self, name = 'last_object'):
+    def save(self, name='last_object'):
         """Saves network and its parameters to Objects folder"""
 
         with open('Objects\\' + name, 'wb') as f:
@@ -145,6 +145,11 @@ if __name__ == "__main__":
 
     data = np.array(data)
 
+    # print(data[0][0].shape)
+    # print(data[0][1].shape)
+    # for item in data:
+    #     print(item[0].shape)
+
     random.shuffle(data)
 
     train_data = data[0:3500]
@@ -152,7 +157,7 @@ if __name__ == "__main__":
 
     net = Network([4800, 30, 17])
 
-    net.SGD(train_data, 5, 20, 0.5, test_data)
+    net.SGD(train_data, 5, 20, 0.03, test_data)
 
 
     print(1)
