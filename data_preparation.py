@@ -79,7 +79,6 @@ def create_data_set(directory, transformation, dataset_name, labels = 17):
 
     return image_list
 
-
 def identity(x):
     return x
 
