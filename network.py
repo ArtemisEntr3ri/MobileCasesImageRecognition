@@ -11,6 +11,8 @@ class Network:
         self.sizes = sizes
         self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
         self.weights = [np.random.randn(x, y) for x, y in zip(sizes[1:], sizes[:-1])]
+
+        self.parameter_num = np.dot(sizes[:-1], sizes[1:]) + sum(sizes[1:])
         return
 
     def feedforward(self, a):
@@ -20,7 +22,7 @@ class Network:
             a = sigmoid(np.dot(W, a) + b)
         return a
 
-    def SGD(self, training_data, epochs, mini_batch_size, learning_rate, test_data = None):
+    def SGD(self, training_data, epochs, mini_batch_size, learning_rate, regularization_factor, test_data = None):
         """Train the neural network using mini-batch stochastic
         gradient descent.  The "training_data" is a list of tuples
         "(x, y)" representing the training inputs and the desired
@@ -39,7 +41,7 @@ class Network:
             mini_batches = [training_data[k:k+mini_batch_size] for k in range(0, n, mini_batch_size)]
 
             for mini_batch in mini_batches:
-                self.update_mini_batch(mini_batch, learning_rate)
+                self.update_mini_batch(mini_batch, learning_rate, regularization_factor, n)
 
             if len(test_data) > 0:
                 print("Epoch {0}: {1} / {2}".format(j, self.evaluate(test_data), n_test))
@@ -47,7 +49,7 @@ class Network:
                 print("Epoch {0} complete".format(j))
         return
 
-    def update_mini_batch(self, mini_batch, learning_rate):
+    def update_mini_batch(self, mini_batch, learning_rate, regularization_factor, n):
         """Update the network's weights and biases by applying
         gradient descent using backpropagation to a single mini batch.
         The "mini_batch" is a list of tuples "(x, y)", and "learning_rate"
@@ -55,11 +57,16 @@ class Network:
         nabla_b = [np.zeros(b.shape) for b in self.biases]
         nabla_w = [np.zeros(w.shape) for w in self.weights]
 
+        # Aproksimiramo parcijalnu derivaciju cost funkcije
         for x, y in mini_batch:
             delta_nabla_b, delta_nabla_w = self.backprop(x, y)
             nabla_b = [nb + dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
             nabla_w = [nw + dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]
 
+        # Dodajemo efekt regularizacije
+        nabla_w = [nw + regularization_factor/n * w for w, nw in zip(self.weights, nabla_w)]
+
+        # Gradient descend pravilo
         self.weights = [w - learning_rate/len(mini_batch) * nw for w, nw in zip(self.weights, nabla_w)]
         self.biases = [b - learning_rate/len(mini_batch)* nb for b, nb in zip(self.biases, nabla_b)]
 
@@ -108,7 +115,7 @@ class Network:
             neuron in the final layer has the highest activation."""
         test_results = [(np.argmax(self.feedforward(x)), y) for (x, y) in test_data]
 
-        # return sum(int(x == y) for (x, y) in test_results)
+        #return sum(int(x == y) for (x, y) in test_results)
         return sum(int(y[x] == 1) for x, y in test_results)
 
     def cost_derivative(self, output_activations, y):
@@ -143,14 +150,14 @@ def sigmoid_derived(z):
 
 if __name__ == "__main__":
 
-    with open('Objects\\debug_dataset2', 'rb') as f:
+    with open('Objects\\debug_dataset', 'rb') as f:
         data = pickle.load(f)
 
     data = np.array(data)
 
-    # print(data[1][0])
-    plt.imshow(data[1][0].reshape(20, 10))
-    plt.show()
+    print(data[1][0].shape)
+    #plt.imshow(data[1][0].reshape(20, 10))
+    #plt.show()
     # print(data[0][0].shape)
     # print(data[0][1].shape)
     # for item in data:
@@ -161,8 +168,13 @@ if __name__ == "__main__":
     train_data = data[0:3500]
     test_data = data[3501:]
 
-    net = Network([200, 17])
+    net = Network([1600, 17])
+    print(net.parameter_num)
 
-    net.SGD(train_data, 30, 20, 0.3, train_data)
+    net.SGD(train_data, epochs=30,
+            mini_batch_size=20,
+            learning_rate=0.3,
+            regularization_factor=100000,
+            test_data=test_data)
 
     print(1)

@@ -17,13 +17,10 @@ if __name__ == "__main__":
 
     #print(nesto(5, dodaj5))
 
-    x = np.zeros((3, 1))
-    print(x.shape)
-    x = x.reshape(3,)
-    print(x.shape)
-    x = x[np.newaxis].transpose()
-    print(x.shape)
+    x = np.array([5, 3, 2])
 
+    num = np.dot(x[:-1], x[1:]) + sum(x[1:])
+    print(num)
     print(0)
 
 
